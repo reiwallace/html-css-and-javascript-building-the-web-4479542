@@ -1,34 +1,67 @@
-/* inside style.css */
-.highlight {
-  background-color: yellow;
-}
-/* Define the error class with styling */
-.error {
-  border: 2px solid red;
-  background-color: #ffe6e6;
-  animation: shake 0.5s;
-  animation-iteration-count: 3;
+html {
+  background-color: #000000;
+  font-family: sans-serif;
+  font-size: 16px;
+  color: #d8d8d8;
 }
 
-/* Define the shake animation */
-@keyframes shake {
-  0% {
-    transform: translateX(0);
-  }
+#gameBox {
+  height: 80%;
+  width: 60%;
+  background: #1e1e1e;
+  position: absolute;
+  left: 20%;
+  top: 5%;
+}
 
-  25% {
-    transform: translateX(-5px);
-  }
+.instructions {
+  margin: 1%;
+  position: relative;
+  text-align: center;
+  margin-bottom: 2%;
+}
 
-  50% {
-    transform: translateX(5px);
-  }
+#animal {
+  font-size: 25px;
+}
 
-  75% {
-    transform: translateX(-5px);
-  }
 
-  100% {
-    transform: translateX(0);
-  }
+#startButtonBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10%;
+}
+
+#startButton {
+  background-color: chocolate;
+  border-color: aqua;
+  width: 30%;
+  height: 100%;
+  position: relative;
+  font-size: 30px;
+}
+
+.centredElements {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inputLine {
+  display: inline-block;
+}
+
+#userInputBox {
+  background-color: #faa8a8;
+  margin-left: 5px;
+}
+
+img {
+  display: block;
+  max-height: 50%;
+  margin: auto;
+  position: relative;
+  border: 10px solid;
+  border-color: #000000;
 }

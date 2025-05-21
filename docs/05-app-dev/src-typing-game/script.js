@@ -1,92 +1,98 @@
-// inside script.js
-// all of our quotes
+// Page elements
+const startButton = document.getElementById("startButton");
+const input = document.getElementById("userInputBox");
+const animalText = document.getElementById("animal");
+const winText = document.getElementById("winText");
+const img = document.getElementById("animalImage")
 
+// Animal List - Also used for images
+const animals = ["Dog", "Cat", "Tiger", "Elephant", "Giraffe", "Capybara"];
 
-const quotes = [
-    'When you have eliminated the impossible, whatever remains, however improbable, must be the truth.',
-    'There is nothing more deceptive than an obvious fact.',
-    'I ought to know by this time that when a fact appears to be opposed to a long train of deductions it invariably proves to be capable of bearing some other interpretation.',
-    'I never make exceptions. An exception disproves the rule.',
-    'What one man can invent another can discover.',
-    'Nothing clears up a case so much as stating it to another person.',
-    'Education never ends, Watson. It is a series of lessons, with the greatest for the last.',
-];
+var activeAnimal;
+var startTime;
 
+// Disable input box initially
+input.disabled = true;
+input.value = "";
 
-// store the list of words and the index of the word the player is currently typing
-let words = [];
-let wordIndex = 0;
+// Set up button to start game on click
+startButton.onclick = function (e) {
+  e.stopPropagation();
+  document.addEventListener("click", startGame(animals[getRandomInt(0, animals.length - 1)]));
+  return false; //handled click
+}
 
-// the starting time
-let startTime = Date.now();
+// Set up input box to trigger function when typed in
+input.oninput = function (e) {
+  e.stopPropagation();
+  document.addEventListener("input", verifyInput(input), false);
+  return false;
+}
 
-// page elements
-const quoteElement = document.getElementById('quote');
-const messageElement = document.getElementById('message');
-const typedValueElement = document.getElementById('typed-value');
+/** Disables button and starts the game
+ * @param {String} animal
+ */
+function startGame(animal) {
+  // Disable button
+  startButton.disabled = true;
 
-// at the end of script.js
-document.getElementById('start').addEventListener('click', () => {
-  // get a quote
-  const quoteIndex = Math.floor(Math.random() * quotes.length);
-  const quote = quotes[quoteIndex];
-  // Put the quote into an array of words
-  words = quote.split(' ');
-  // reset the word index for tracking
-  wordIndex = 0;
+  // Enable input box
+  input.disabled = false;
+  input.value = "";
+  input.focus();
 
-  // UI updates
-  // Create an array of span elements so we can set a class
-  const spanWords = words.map(function(word) { return `<span>${word} </span>`});
-  // Convert into string and set as innerHTML on quote display
-  quoteElement.innerHTML = spanWords.join('');
-  // Highlight the first word
-  quoteElement.childNodes[0].className = 'highlight';
-  // Clear any prior messages
-  messageElement.innerText = '';
+  // Configure winText and animalText
+  winText.innerHTML = "";
+  animalText.innerHTML = animal;
+  animalText.style.color = "#c50000";
+  activeAnimal = animal;
+  img.src = "./img/" + activeAnimal + ".jpg";
 
-  // Setup the textbox
-  // Clear the textbox
-  typedValueElement.value = '';
-  // set focus
-  typedValueElement.focus();
-  // set the event handler
-
-  // Start the timer
+  // Save round start time
   startTime = new Date().getTime();
-});
+}
 
-// at the end of script.js
-typedValueElement.addEventListener('input', () => {
-  // Get the current word
-  const currentWord = words[wordIndex];
-  // get the current value
-  const typedValue = typedValueElement.value;
+/** Ends game re-enabling button and disabling text input
+ * @param {Double} endTime 
+ */
+function endGame(endTime) {
+  // Calculate duration of round rounding to 2 decimal places
+  let roundDuration = Math.round((endTime - startTime) / 10) / 100
 
-  if (typedValue === currentWord && wordIndex === words.length - 1) {
-    // end of sentence
-    // Display success
-    const elapsedTime = new Date().getTime() - startTime;
-    const message = `CONGRATULATIONS! You finished in ${elapsedTime / 1000} seconds.`;
-    messageElement.innerText = message;
-  } else if (typedValue.endsWith(' ') && typedValue.trim() === currentWord) {
-    // end of word
-    // clear the typedValueElement for the new word
-    typedValueElement.value = '';
-    // move to the next word
-    wordIndex++;
-    // reset the class name for all elements in quote
-    for (const wordElement of quoteElement.childNodes) {
-      wordElement.className = '';
+  // Disables input box and re-enables button
+  input.disabled = true;
+  startButton.disabled = false;
+
+  // Set win text showing round duration
+  winText.innerHTML = "You typed the correct answer in: " + roundDuration + " seconds!!";
+}
+
+/** Verfies the player's inputs changing text colours or ending round
+ * @param {Element} input 
+ */
+function verifyInput(input) {
+  var value = input.value;
+
+  // Changes colour of animalText to red or green depending on player input
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] == activeAnimal[i]) {
+      animalText.style.color = "#00d134";
+    } else {
+      animalText.style.color = "#c50000";
+      return;
     }
-    // highlight the new word
-    quoteElement.childNodes[wordIndex].className = 'highlight';
-  } else if (currentWord.startsWith(typedValue)) {
-    // currently correct
-    // highlight the next word
-    typedValueElement.className = '';
-  } else {
-    // error state
-    typedValueElement.className = 'error';
   }
-});
+
+  // Ends game if player input is the same as the activeAnimal
+  if (value == activeAnimal) {
+    endGame(new Date().getTime());
+  }
+}
+
+/** Returns a random number between two values
+* @param {int} min - the minimum number to generate a value from
+* @param {int} max - the minimum number to generate a value from 
+*/
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
